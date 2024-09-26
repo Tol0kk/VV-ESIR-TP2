@@ -23,3 +23,23 @@ Use your rule with different projects and describe you findings below. See the [
 
 ## Answer
 
+```xml
+<rule name="NestedIfDepth3OrMore"
+    language="java"
+    message="There a nested IF of depth >= 3"
+    class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
+    <description>
+
+    </description>
+    <priority>3</priority>
+    <properties>
+        <property name="xpath">
+        <value>
+<![CDATA[
+//IfStatement[count(.//IfStatement//IfStatement) >= 1]
+]]>
+        </value>
+        </property>
+    </properties>
+</rule>
+```

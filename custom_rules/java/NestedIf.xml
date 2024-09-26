@@ -1,0 +1,46 @@
+<ruleset name="NestedIf"
+   xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd"
+   xmlns:xpath="http://pmd.sourceforge.net/ruleset/xpath/2.0.0">
+
+   <description>
+        Custom ruleset to detect nested IF statements.
+    </description>
+   <!-- <rule name="NestedIfDepth2OrMore"
+      language="java"
+      message="There a nested IF of depth >= 2"
+      class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
+      <description>
+
+      </description>
+      <priority>3</priority>
+      <properties>
+         <property name="xpath">
+            <value>
+   <![CDATA[
+   //IfStatement
+   ]]>
+            </value>
+         </property>
+      </properties>
+   </rule> -->
+   <rule name="NestedIfDepth3OrMore"
+      language="java"
+      message="There a nested IF of depth >= 3"
+      class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
+      <description>
+
+      </description>
+      <priority>3</priority>
+      <properties>
+         <property name="xpath">
+            <value>
+   <![CDATA[
+   //IfStatement[count(.//IfStatement//IfStatement) >= 1]
+   ]]>
+            </value>
+         </property>
+      </properties>
+   </rule>
+</ruleset>

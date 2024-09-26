@@ -12,3 +12,12 @@ pmd-check -f text -R rulesets/java/quickstart.xml -d projects_codebase/commons-c
 pmd-check -f text -R rulesets/java/quickstart.xml -d projects_codebase/commons-lang -r outputs/commons-lang/java/quickstart.out
 pmd-check -f text -R rulesets/java/quickstart.xml -d projects_codebase/commons-math -r outputs/commons-math/java/quickstart.out
 ```
+
+**Run Pmd NestedIf Check for all code base**
+
+```sh 
+pmd-check -f text -R custom_rules/java/NestedIf.xml -d projects_codebase/commons-cli -r outputs/commons-cli/java/NestedIf.out
+pmd-check -f text -R custom_rules/java/NestedIf.xml -d projects_codebase/commons-collections -r outputs/commons-collections/java/NestedIf.out
+pmd-check -f text -R custom_rules/java/NestedIf.xml -d projects_codebase/commons-lang -r outputs/commons-lang/java/NestedIf.out
+pmd-check -f text -R custom_rules/java/NestedIf.xml -d projects_codebase/commons-math -r outputs/commons-math/java/NestedIf.out
+```
