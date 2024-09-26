@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchzip, unzip, makeWrapper, openjdk, libGL, xorg, jdk }:
+{ lib, stdenv, fetchzip, unzip, makeWrapper, openjdk, libGL, xorg, jdk, wrapGAppsHook3 }:
 
 stdenv.mkDerivation rec {
   pname = "pmd";
@@ -9,7 +9,9 @@ stdenv.mkDerivation rec {
     hash = "sha256-Kfikut45HtQ+UZTJFZZdNqLd4iMQrvHUb5IyLtGbdPI=";
   };
 
-  nativeBuildInputs = [ xorg.libXxf86vm.out libGL xorg.libXtst makeWrapper ];
+  patches = [ ./pmd-conf.patch ];
+
+  nativeBuildInputs = [ xorg.libXxf86vm.out libGL xorg.libXtst makeWrapper wrapGAppsHook3 ];
 
   dontConfigure = true;
   dontBuild = true;
