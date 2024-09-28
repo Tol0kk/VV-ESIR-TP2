@@ -6,3 +6,23 @@ A refresher on TCC and LCC is available in the [course notes](https://oscarlvp.g
 
 ## Answer
 
+```java
+public final class Point {
+    private float x;
+    private float y;
+
+    public Point(x,y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public float get_X() {
+        return x;
+    }
+
+    public float get_Y() {
+        return y;
+    }
+}
+```
+
