@@ -1,0 +1,7 @@
+@startuml exo1
+
+storage "getX()"
+storage "getY()"
+storage "Point()"
+
+@enduml

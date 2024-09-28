@@ -6,6 +6,15 @@ A refresher on TCC and LCC is available in the [course notes](https://oscarlvp.g
 
 ## Answer
 
+### TCC vs LCC
+
+As it's said in the course notes, "TCC is defined as the ratio of directly connected pairs of node in the graph to the number or all pairs of nodes. On its side, LCC is the number of pairs of connected (directly or indirectly) nodes to all pairs of node". 
+
+That's why LCC can't be lower than TCC, because it includes both directly and indirectly connected nodes, where TCC include only directed connected nodes.
+
+TCC and LCC can have the same value where there is no indirectly connected nodes and only directly connected nodes, or if there is no connection between methods. 
+
+
 ```java
 public final class Point {
     private float x;
@@ -26,3 +35,5 @@ public final class Point {
 }
 ```
 
+Here is the graph of the methods : 
+![graph](/exercises/exo1.svg)
