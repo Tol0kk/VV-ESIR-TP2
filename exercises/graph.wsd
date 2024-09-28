@@ -1,7 +1,7 @@
 @startuml exo1
 
-circle getX()
-circle getY()
-circle Point()
+storage "getX()"
+storage "getY()"
+storage "Point()"
 
 @enduml

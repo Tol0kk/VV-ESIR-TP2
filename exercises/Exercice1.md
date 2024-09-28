@@ -35,3 +35,5 @@ public final class Point {
 }
 ```
 
+Here is the graph of the methods : 
+![graph](/exercises/exo1.svg)
