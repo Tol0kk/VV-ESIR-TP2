@@ -7,3 +7,6 @@ Pick a Java project from Github (see the [instructions](../sujet.md) for suggest
 
 ## Answer
 
+`projects_codebase/commons-cli/src/main/java/org/apache/commons/cli/PatternOptionBuilder.java:133:	SwitchStmtsShouldHaveDefault:	Switch statements should be exhaustive, add a default case (or missing enum branches)`
+
+`projects_codebase/commons-lang/src/main/java/org/apache/commons/lang3/StringUtils.java:5673:	ForLoopCanBeForeach:	This for loop can be replaced by a foreach loop`
