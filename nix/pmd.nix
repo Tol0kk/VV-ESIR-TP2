@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     hash = "sha256-Kfikut45HtQ+UZTJFZZdNqLd4iMQrvHUb5IyLtGbdPI=";
   };
 
-  patches = [ ./pmd-conf.patch ];
+  patches = [ ./pmd-conf.patch ]; # Remove Config folder Creation in the pmd bash script.
 
   nativeBuildInputs = [ xorg.libXxf86vm.out libGL xorg.libXtst makeWrapper wrapGAppsHook3 ];
 
