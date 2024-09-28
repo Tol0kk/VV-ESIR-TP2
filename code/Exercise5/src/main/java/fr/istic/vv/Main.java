@@ -30,7 +30,7 @@ public class Main {
         SourceRoot root = new SourceRoot(file.toPath());
         CyclomaticComplexityEvaluation printer = new CyclomaticComplexityEvaluation();
         root.parse("", (localPath, absolutePath, result) -> {
-            result.ifSuccessful(unit -> unit.accept(printer, null));
+            result.ifSuccessful(unit -> unit.accept(printer, 0));
             return SourceRoot.Callback.Result.DONT_SAVE;
         });
     }
