@@ -14,3 +14,24 @@ That's why LCC can't be lower than TCC, because it includes both directly and in
 
 TCC and LCC can have the same value where there is no indirectly connected nodes and only directly connected nodes, or if there is no connection between methods. 
 
+
+```java
+public final class Point {
+    private float x;
+    private float y;
+
+    public Point(x,y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public float get_X() {
+        return x;
+    }
+
+    public float get_Y() {
+        return y;
+    }
+}
+```
+
