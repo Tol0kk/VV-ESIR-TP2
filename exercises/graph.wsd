@@ -1,0 +1,7 @@
+@startuml exo1
+
+circle getX()
+circle getY()
+circle Point()
+
+@enduml
