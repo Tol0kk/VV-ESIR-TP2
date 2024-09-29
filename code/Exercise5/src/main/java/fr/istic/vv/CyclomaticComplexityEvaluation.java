@@ -33,8 +33,6 @@ public class CyclomaticComplexityEvaluation extends VoidVisitorWithDefaults<Inte
 
     public void visitTypeDeclaration(TypeDeclaration<?> declaration, Integer arg) {
         for(MethodDeclaration method : declaration.getMethods()) {
-            java.util.List<Node> childs = declaration.getChildNodes();
-
             List<IfStmt> ifStmts = method.findAll(IfStmt.class);
             List<ForStmt> forStmts = method.findAll(ForStmt.class);
             List<WhileStmt> whileStmts = method.findAll(WhileStmt.class);
