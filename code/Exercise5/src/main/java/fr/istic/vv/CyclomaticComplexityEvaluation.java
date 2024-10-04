@@ -9,7 +9,6 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.VoidVisitorWithDefaults;
 
 import java.util.List;
-import java.lang.Class;
 import java.util.stream.Collectors;
 
 public class CyclomaticComplexityEvaluation extends VoidVisitorWithDefaults<Integer> {
@@ -63,7 +62,7 @@ public class CyclomaticComplexityEvaluation extends VoidVisitorWithDefaults<Inte
     
             String class_name = declaration.getFullyQualifiedName().orElse("[Anonymous]");
             String method_name = prettyMethodString(method);
-            System.out.println(String.format("%s;%s;%d", class_name, method_name, cc_total));
+            System.out.printf("%s  ;  %s  ;  %d%n", class_name, method_name, cc_total);
         }
         // Printing nested types in the top level
         for(BodyDeclaration<?> member : declaration.getMembers()) {
