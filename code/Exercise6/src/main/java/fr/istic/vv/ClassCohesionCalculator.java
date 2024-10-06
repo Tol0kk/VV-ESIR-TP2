@@ -79,6 +79,7 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
         }
 
         System.out.println(declaration.getNameAsString() + " has a TCC of " + computeTCC(graph));
+        System.out.println(declaration.getNameAsString() + " has a LCC of " + computeLCC(graph));
 
         // Printing nested types in the top level
         for(BodyDeclaration<?> member : declaration.getMembers()) {
@@ -126,12 +127,24 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
             return 0.0;
         }
 
-        double nbConnectionsDirectes = 0;
-        for (String key : graph.keySet()) {
-            nbConnectionsDirectes += (float)graph.get(key).size();
-        }
+        double nbConnectionsDirectes = compteConnexions(graph);
 
         return nbConnectionsDirectes / nbPairesPossible;
+    }
+
+    private double computeLCC(HashMap<String, HashSet<String>> graph) {
+        int n = graph.keySet().size();
+        double nbPairesPossible = combinaison(n, 2); // total de paires possibles
+
+        if (nbPairesPossible == 0.0) {
+            return 0.0;
+        }
+
+        // comptage des liens
+        double nbConnexions = compteConnexions(fermeture(graph));
+
+        // calcul
+        return nbConnexions / nbPairesPossible;
     }
 
     private double factorial(int n) {
@@ -146,5 +159,60 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
 
     private double combinaison(int n, int p) {
         return factorial(n) / (factorial(p) * factorial(n - p));
+    }
+
+    public static HashMap<String, HashSet<String>> fermeture(HashMap<String, HashSet<String>> graph) {
+        // Créer un nouveau graphe pour stocker la fermeture transitive
+        HashMap<String, HashSet<String>> fermetureGraph = new HashMap<>();
+
+        HashMap<String, HashSet<String>> voisins = new HashMap<>();
+        for (String cle : graph.keySet()) {
+            if (!voisins.containsKey(cle)) {
+                voisins.put(cle, new HashSet<>());
+            }
+            for (String voisin : graph.get(cle)) {
+                voisins.get(cle).add(voisin);
+                if (!voisins.containsKey(voisin)) {
+                    voisins.put(voisin, new HashSet<>());
+                }
+                voisins.get(voisin).add(cle);
+            }
+        }
+
+        for (String node : voisins.keySet()) {
+            // Initialiser un ensemble vide pour le noeud dans le nouveau graphe
+            fermetureGraph.put(node, new HashSet<>());
+            // Faire une recherche pour trouver tous les noeuds accessibles depuis 'node'
+            HashSet<String> visited = new HashSet<>();
+            dfs(node, voisins, visited);
+
+            // Ajouter les voisins au graphe de fermeture en respectant l'ordre lexicographique
+            for (String neighbor : visited) {
+                if (!node.equals(neighbor) && node.compareTo(neighbor) < 0) {
+                    fermetureGraph.get(node).add(neighbor);
+                }
+            }
+        }
+
+        return fermetureGraph;
+    }
+
+    // Fonction DFS pour explorer tous les voisins d'un noeud
+    private static void dfs(String node, HashMap<String, HashSet<String>> graph, HashSet<String> visited) {
+        visited.add(node);
+        for (String neighbor : graph.getOrDefault(node, new HashSet<>())) {
+            if (!visited.contains(neighbor)) {
+                dfs(neighbor, graph, visited);
+            }
+        }
+    }
+
+    private int compteConnexions(HashMap<String, HashSet<String>> graph) {
+        int nbConnectionsDirectes = 0;
+        for (String key : graph.keySet()) {
+            nbConnectionsDirectes += graph.get(key).size();
+        }
+
+        return nbConnectionsDirectes;
     }
 }
