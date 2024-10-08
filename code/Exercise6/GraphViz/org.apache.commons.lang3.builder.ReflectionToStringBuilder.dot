@@ -1,0 +1,38 @@
+graph {
+    getUpToClass -- setUpToClass[label="upToClass"];
+    setUpToClass;
+    reflectionAppendArray;
+    setAppendTransients -- isAppendTransients[label="appendTransients"];
+    toNoNullStringArray;
+    isAppendStatics;
+    isExcludeNullValues -- toString[label="excludeNullValues"];
+    isExcludeNullValues -- appendFieldsIn[label="excludeNullValues"];
+    isExcludeNullValues -- setExcludeNullValues[label="excludeNullValues"];
+    appendFieldsIn -- setExcludeNullValues[label="excludeNullValues"];
+    setExcludeNullValues;
+    toStringExclude -- accept[label="excludeFieldNames"];
+    toStringExclude -- validate[label="excludeFieldNames"];
+    accept -- validate[label="includeFieldNames"];
+    accept -- setIncludeFieldNames[label="includeFieldNames"];
+    getValue;
+    setExcludeFieldNames -- getExcludeFieldNames[label="excludeFieldNames"];
+    setExcludeFieldNames -- toStringExclude[label="excludeFieldNames"];
+    setExcludeFieldNames -- accept[label="excludeFieldNames"];
+    setExcludeFieldNames -- validate[label="excludeFieldNames"];
+    getExcludeFieldNames -- toStringExclude[label="excludeFieldNames"];
+    getExcludeFieldNames -- accept[label="excludeFieldNames"];
+    getExcludeFieldNames -- validate[label="excludeFieldNames"];
+    setAppendStatics -- isAppendStatics[label="appendStatics"];
+    getIncludeFieldNames -- toStringInclude[label="includeFieldNames"];
+    getIncludeFieldNames -- accept[label="includeFieldNames"];
+    getIncludeFieldNames -- setIncludeFieldNames[label="includeFieldNames"];
+    getIncludeFieldNames -- validate[label="includeFieldNames"];
+    toStringInclude -- accept[label="includeFieldNames"];
+    toStringInclude -- setIncludeFieldNames[label="includeFieldNames"];
+    toStringInclude -- validate[label="includeFieldNames"];
+    toString -- appendFieldsIn[label="excludeNullValues"];
+    toString -- setExcludeNullValues[label="excludeNullValues"];
+    isAppendTransients;
+    setIncludeFieldNames -- validate[label="includeFieldNames"];
+    validate;
+}

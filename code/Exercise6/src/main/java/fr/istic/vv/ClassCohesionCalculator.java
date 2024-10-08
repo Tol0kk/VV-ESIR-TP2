@@ -1,16 +1,17 @@
 package fr.istic.vv;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Modifier;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorWithDefaults;
 
-import javax.lang.model.element.VariableElement;
-import java.lang.reflect.Array;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.*;
+
+import java.nio.file.*;
 
 public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
     @Override
@@ -21,6 +22,9 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
     }
 
     public void visitTypeDeclaration(TypeDeclaration<?> declaration, Void arg) {
+        String declarationName = declaration.getFullyQualifiedName().orElseGet(declaration::getNameAsString);
+        System.out.println(" --- " + declarationName + " --- ");
+
 
         // clé : attribut
         // valeur : ensemble des méthodes qui accèdent à cet attribut
@@ -31,6 +35,7 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
         // clé : noeud
         // valeur : liste de voisins
         HashMap<String, HashSet<String>> graph = new HashMap<>();
+        HashMap<String, String> connexions_label = new HashMap<>();
 
         List<FieldDeclaration> fields = declaration.getFields();
         for (FieldDeclaration f : fields) {
@@ -71,15 +76,29 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
                 int j = i+1;
                 while (j < voisins_direct.size()) {
                     String voisin_courant = voisins_direct.get(j);
-                    lierNoeud(graph, courant, voisin_courant);
+
+
+                    if (courant.compareTo(voisin_courant) < 0) {
+                        graph.get(courant).add(voisin_courant);
+                        connexions_label.put(courant + voisin_courant, key);
+                    } else {
+                        graph.get(courant).add(voisin_courant);
+                        connexions_label.put(voisin_courant + courant, key);
+                    }
                     j++;
                 }
                 i++;
             }
         }
 
-        System.out.println(declaration.getNameAsString() + " has a TCC of " + computeTCC(graph));
-        System.out.println(declaration.getNameAsString() + " has a LCC of " + computeLCC(graph));
+        double TCC = computeTCC(graph);
+
+        System.out.println("    TCC of " + TCC);
+        System.out.println("    LCC of " + computeLCC(graph));
+
+        if (TCC > 0) {
+            exportGraphViz(graph, connexions_label, declarationName);
+        }
 
         // Printing nested types in the top level
         for(BodyDeclaration<?> member : declaration.getMembers()) {
@@ -97,26 +116,6 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
     @Override
     public void visit(EnumDeclaration declaration, Void arg) {
         visitTypeDeclaration(declaration, arg);
-    }
-
-    private void lierNoeud(HashMap<String, HashSet<String>> graph, String noeud1, String noeud2) {
-
-        if (Objects.equals(noeud1, noeud2)) {
-            return;
-        }
-
-        String key;
-        String value;
-
-        if (noeud1.compareTo(noeud2) < 0) {
-            key = noeud1;
-            value = noeud2;
-        } else {
-            key = noeud2;
-            value = noeud1;
-        }
-
-        graph.get(key).add(value);
     }
 
     private double computeTCC(HashMap<String, HashSet<String>> graph) {
@@ -214,5 +213,56 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
         }
 
         return nbConnectionsDirectes;
+    }
+
+    private void exportGraphViz(HashMap<String, HashSet<String>> graph, HashMap<String, String> labels, String className) {
+        // creation of folder in current directory (has the name of the curent time
+        Path folderPath = Paths.get("GraphViz");
+        if (!Files.exists(folderPath)) {
+            try {
+                Files.createDirectory(folderPath);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Impossible d'avoir accès au dossier GraphViz " + className);
+                return;
+            }
+        }
+
+        File file = new File("GraphViz/" + className + ".dot");
+
+        try {
+            file.createNewFile();
+            FileWriter writter = new FileWriter(file, false);
+            writter.write("graph {\n");
+
+            // description of all edges
+            for (String key : graph.keySet()) {
+                HashSet<String> voisins = graph.get(key);
+
+                if (voisins.isEmpty()) {
+                    writter.write("    " + key + ";\n");
+                    continue;
+                }
+
+                for (String voisin : voisins) {
+                    String label;
+                    if (key.compareTo(voisin) < 0) {
+                        label = labels.get(key+voisin);
+                    } else {
+                        label = labels.get(voisin+key);
+                    }
+
+                    writter.write("    " + key + " -- " + voisin + "[label=\"" + label +"\"];\n");
+                }
+            }
+            writter.write("}");
+            writter.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
     }
 }
