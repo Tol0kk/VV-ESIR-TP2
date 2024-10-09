@@ -62,7 +62,7 @@ public class CyclomaticComplexityEvaluation extends VoidVisitorWithDefaults<Inte
     
             String class_name = declaration.getFullyQualifiedName().orElse("[Anonymous]");
             String method_name = prettyMethodString(method);
-            System.out.printf("%s  ;  %s  ;  %d%n", class_name, method_name, cc_total);
+            System.out.printf("%s;%s;%d\n", class_name, method_name, cc_total);
         }
         // Printing nested types in the top level
         for(BodyDeclaration<?> member : declaration.getMembers()) {

@@ -8,4 +8,6 @@ Include in this repository the code of your application. Remove all unnecessary 
 
 You may use [javaparser-starter](../code/javaparser-starter) as a starting point.
 
-# TODO Histo gram
+# Visualization  
+
+![Visualization of CC on apache project](../code/Exercise5/viz_apache.png) // TODO

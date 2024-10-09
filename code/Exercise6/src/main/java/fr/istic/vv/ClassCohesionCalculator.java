@@ -1,16 +1,17 @@
 package fr.istic.vv;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Modifier;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorWithDefaults;
 
-import javax.lang.model.element.VariableElement;
-import java.lang.reflect.Array;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.*;
+
+import java.nio.file.*;
 
 public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
     @Override
@@ -21,6 +22,9 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
     }
 
     public void visitTypeDeclaration(TypeDeclaration<?> declaration, Void arg) {
+        String declarationName = declaration.getFullyQualifiedName().orElseGet(declaration::getNameAsString);
+        System.out.println(" --- " + declarationName + " --- ");
+
 
         // clé : attribut
         // valeur : ensemble des méthodes qui accèdent à cet attribut
@@ -31,6 +35,7 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
         // clé : noeud
         // valeur : liste de voisins
         HashMap<String, HashSet<String>> graph = new HashMap<>();
+        HashMap<String, String> connexions_label = new HashMap<>();
 
         List<FieldDeclaration> fields = declaration.getFields();
         for (FieldDeclaration f : fields) {
@@ -71,14 +76,29 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
                 int j = i+1;
                 while (j < voisins_direct.size()) {
                     String voisin_courant = voisins_direct.get(j);
-                    lierNoeud(graph, courant, voisin_courant);
+
+
+                    if (courant.compareTo(voisin_courant) < 0) {
+                        graph.get(courant).add(voisin_courant);
+                        connexions_label.put(courant + voisin_courant, key);
+                    } else {
+                        graph.get(courant).add(voisin_courant);
+                        connexions_label.put(voisin_courant + courant, key);
+                    }
                     j++;
                 }
                 i++;
             }
         }
 
-        System.out.println(declaration.getNameAsString() + " has a TCC of " + computeTCC(graph));
+        double TCC = computeTCC(graph);
+
+        System.out.println("    TCC of " + TCC);
+        System.out.println("    LCC of " + computeLCC(graph));
+
+        if (TCC > 0) {
+            exportGraphViz(graph, connexions_label, declarationName);
+        }
 
         // Printing nested types in the top level
         for(BodyDeclaration<?> member : declaration.getMembers()) {
@@ -98,26 +118,6 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
         visitTypeDeclaration(declaration, arg);
     }
 
-    private void lierNoeud(HashMap<String, HashSet<String>> graph, String noeud1, String noeud2) {
-
-        if (Objects.equals(noeud1, noeud2)) {
-            return;
-        }
-
-        String key;
-        String value;
-
-        if (noeud1.compareTo(noeud2) < 0) {
-            key = noeud1;
-            value = noeud2;
-        } else {
-            key = noeud2;
-            value = noeud1;
-        }
-
-        graph.get(key).add(value);
-    }
-
     private double computeTCC(HashMap<String, HashSet<String>> graph) {
         int n = graph.keySet().size();
         double nbPairesPossible = combinaison(n, 2); // total de paires possibles
@@ -126,12 +126,24 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
             return 0.0;
         }
 
-        double nbConnectionsDirectes = 0;
-        for (String key : graph.keySet()) {
-            nbConnectionsDirectes += (float)graph.get(key).size();
-        }
+        double nbConnectionsDirectes = compteConnexions(graph);
 
         return nbConnectionsDirectes / nbPairesPossible;
+    }
+
+    private double computeLCC(HashMap<String, HashSet<String>> graph) {
+        int n = graph.keySet().size();
+        double nbPairesPossible = combinaison(n, 2); // total de paires possibles
+
+        if (nbPairesPossible == 0.0) {
+            return 0.0;
+        }
+
+        // comptage des liens
+        double nbConnexions = compteConnexions(fermeture(graph));
+
+        // calcul
+        return nbConnexions / nbPairesPossible;
     }
 
     private double factorial(int n) {
@@ -146,5 +158,111 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
 
     private double combinaison(int n, int p) {
         return factorial(n) / (factorial(p) * factorial(n - p));
+    }
+
+    public static HashMap<String, HashSet<String>> fermeture(HashMap<String, HashSet<String>> graph) {
+        // Créer un nouveau graphe pour stocker la fermeture transitive
+        HashMap<String, HashSet<String>> fermetureGraph = new HashMap<>();
+
+        HashMap<String, HashSet<String>> voisins = new HashMap<>();
+        for (String cle : graph.keySet()) {
+            if (!voisins.containsKey(cle)) {
+                voisins.put(cle, new HashSet<>());
+            }
+            for (String voisin : graph.get(cle)) {
+                voisins.get(cle).add(voisin);
+                if (!voisins.containsKey(voisin)) {
+                    voisins.put(voisin, new HashSet<>());
+                }
+                voisins.get(voisin).add(cle);
+            }
+        }
+
+        for (String node : voisins.keySet()) {
+            // Initialiser un ensemble vide pour le noeud dans le nouveau graphe
+            fermetureGraph.put(node, new HashSet<>());
+            // Faire une recherche pour trouver tous les noeuds accessibles depuis 'node'
+            HashSet<String> visited = new HashSet<>();
+            dfs(node, voisins, visited);
+
+            // Ajouter les voisins au graphe de fermeture en respectant l'ordre lexicographique
+            for (String neighbor : visited) {
+                if (!node.equals(neighbor) && node.compareTo(neighbor) < 0) {
+                    fermetureGraph.get(node).add(neighbor);
+                }
+            }
+        }
+
+        return fermetureGraph;
+    }
+
+    // Fonction DFS pour explorer tous les voisins d'un noeud
+    private static void dfs(String node, HashMap<String, HashSet<String>> graph, HashSet<String> visited) {
+        visited.add(node);
+        for (String neighbor : graph.getOrDefault(node, new HashSet<>())) {
+            if (!visited.contains(neighbor)) {
+                dfs(neighbor, graph, visited);
+            }
+        }
+    }
+
+    private int compteConnexions(HashMap<String, HashSet<String>> graph) {
+        int nbConnectionsDirectes = 0;
+        for (String key : graph.keySet()) {
+            nbConnectionsDirectes += graph.get(key).size();
+        }
+
+        return nbConnectionsDirectes;
+    }
+
+    private void exportGraphViz(HashMap<String, HashSet<String>> graph, HashMap<String, String> labels, String className) {
+        // creation of folder in current directory (has the name of the curent time
+        Path folderPath = Paths.get("GraphViz");
+        if (!Files.exists(folderPath)) {
+            try {
+                Files.createDirectory(folderPath);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Impossible d'avoir accès au dossier GraphViz " + className);
+                return;
+            }
+        }
+
+        File file = new File("GraphViz/" + className + ".dot");
+
+        try {
+            file.createNewFile();
+            FileWriter writter = new FileWriter(file, false);
+            writter.write("graph {\n");
+
+            // description of all edges
+            for (String key : graph.keySet()) {
+                HashSet<String> voisins = graph.get(key);
+
+                if (voisins.isEmpty()) {
+                    writter.write("    " + key + ";\n");
+                    continue;
+                }
+
+                for (String voisin : voisins) {
+                    String label;
+                    if (key.compareTo(voisin) < 0) {
+                        label = labels.get(key+voisin);
+                    } else {
+                        label = labels.get(voisin+key);
+                    }
+
+                    writter.write("    " + key + " -- " + voisin + "[label=\"" + label +"\"];\n");
+                }
+            }
+            writter.write("}");
+            writter.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
     }
 }

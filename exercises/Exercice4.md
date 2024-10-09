@@ -28,4 +28,29 @@ Include in this repository the code of your application. Remove all unnecessary 
 
 *Disclaimer* In a real project not all fields need to be accessed with a public getter.
 
-# TODO test on other project
+# Ans
+
+Sample of generated outputs.
+
+```md
+## org.apache.commons.cli.HelpFormatter.Builder
+
+
+### Private Fields
+
+- DEFAULT_DEPRECATED_FORMAT: Function<Option, String>
+- deprecatedFormatFunction: Function<Option, String>
+- printStream: PrintWriter
+- showSince: boolean
+
+### Public Getters
+
+ - get() -> HelpFormatter
+
+### Missing Getters
+
+- getDeprecatedFormatFunction() is missing
+- getDEFAULT_DEPRECATED_FORMAT() is missing
+- getShowSince() is missing
+- getPrintStream() is missing
+```

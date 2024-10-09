@@ -7,24 +7,6 @@
    <description>
         Custom ruleset to detect nested IF statements.
     </description>
-   <!-- <rule name="NestedIfDepth2OrMore"
-      language="java"
-      message="There a nested IF of depth >= 2"
-      class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
-      <description>
-
-      </description>
-      <priority>3</priority>
-      <properties>
-         <property name="xpath">
-            <value>
-   <![CDATA[
-   //IfStatement
-   ]]>
-            </value>
-         </property>
-      </properties>
-   </rule> -->
    <rule name="NestedIfDepth3OrMore"
       language="java"
       message="There a nested IF of depth >= 3"

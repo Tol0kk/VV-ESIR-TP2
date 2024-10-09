@@ -27,6 +27,13 @@
           JAVAFX_HOME = "${pkgs.openjfx}";
           packages = with pkgs; [
             gcc
+            (pkgs.python311Full.withPackages (python-pkgs: with python-pkgs; [
+              # select Python packages here
+              plotly
+              pandas
+              numpy
+              packaging
+            ]))
             gradle
             jdk
             maven

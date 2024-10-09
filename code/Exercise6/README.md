@@ -1,3 +1,5 @@
 # Code of your exercise
 
-Put here all the code created for this exercise
+# Info 
+
+Info are in [Exercise6.md](../../exercises/Exercice6.md)
