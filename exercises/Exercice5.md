@@ -20,8 +20,6 @@ The printer generate a CSV file separated with `;`. The columns are `module/clas
 ## Box plot visualization of CC for each code base
 ![Visualization of CC on apache project](Exo5boxplot.png) 
 
-
-
 # Usage
 
 ```sh
@@ -35,7 +33,7 @@ java -jar target/CyclomaticComplexityAnalysis-1.0-jar-with-dependencies.jar ../.
 java -jar target/CyclomaticComplexityAnalysis-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-lang/src > ../../outputs/commons-lang/cc.csv
 java -jar target/CyclomaticComplexityAnalysis-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-math/src > ../../outputs/commons-math/cc.csv
 
-# Visualize with BoxPlot
+# Visualize with BoxPlot & Histogram
 python script_graph/main.py ../../outputs/commons-math/cc.csv ../../outputs/commons-lang/cc.csv ../../outputs/commons-collections/cc.csv ../../outputs/commons-cli/cc.csv
 ```
 
