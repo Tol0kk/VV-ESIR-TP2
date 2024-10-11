@@ -15,10 +15,10 @@ You may use [javaparser-starter](../code/javaparser-starter) as a starting point
 The printer generate a CSV file separated with `;`. The columns are `module/class info`, `method name/type`, `cc`. 
 
 ## Histogram visualization of CC for each code base
-![Visualization of CC on apache project](Exo5histo.png) 
+![Visualization of CC on apache project](ressources/Exo5histo.png) 
 
 ## Box plot visualization of CC for each code base
-![Visualization of CC on apache project](Exo5boxplot.png) 
+![Visualization of CC on apache project](ressources/Exo5boxplot.png) 
 
 # Usage
 

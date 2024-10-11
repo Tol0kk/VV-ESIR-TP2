@@ -12,17 +12,19 @@ You may use [javaparser-starter](../code/javaparser-starter) as a starting point
 
 # Answers
 
-To compile, run, and get an output in the file `target/output.txt` :
+To compile, run, and get an output in a csv file :
 
 ```sh
 cd code/Exercise6/
 mvn package
-java -jar target/javaparser-starter-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-lang/src/main > target/output.txt
+java -jar target/javaparser-starter-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-lang/src/main > script_histo/common-lang.csv
+java -jar target/javaparser-starter-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-collections/src/main > script_histo/common-collections.csv
+java -jar target/javaparser-starter-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-cli/src/main > script_histo/common-cli.csv
+java -jar target/javaparser-starter-1.0-jar-with-dependencies.jar ../../projects_codebase/commons-math/src/main > script_histo/common-math.csv
 ```
 
-In the file output.txt, you will see the values of all the TCC and LCC.
 Running the project also create a folder [code/Exercise6/GraphViz](code/Exercise6/GraphViz).
-For each class, a `.dot` file is created, showing the dependency of the function.
+For each class, a `.dot` file is created if the TCC and LCC are greater than zero, showing the graph dependency of the function.
 
 To get a `svg` or `png` file from the `.dot` file, run the following commands :
 
@@ -35,3 +37,18 @@ Here is with what we got with the `ReflectionToStringBuilder` class from the Apa
 `commons-lang` :
 
 ![graph of Reflection to String Builder](../code/Exercise6/GraphViz/reflection_to_string_builder.svg)
+
+To generate nice histogramms of TCC value, you can run the following command :
+
+```sh
+cd code/Exercise6/script_histo             # chage directory
+python3 -m venv .venv                      # create a python virtual environment
+source .venv/bin/activate                  # activate the environment
+python3 -m pip install -r requirements.txt # install the dependencies
+python3 main.py common-cli.csv common-collections.csv common-lang.csv common-math.csv
+```
+
+This last command should open your browser and show you the following boxplot and histogram :
+
+![Histogramme](ressources/histogram.png)
+![boxplot](ressources/boxplot.png)

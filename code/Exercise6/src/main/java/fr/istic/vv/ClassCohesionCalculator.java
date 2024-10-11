@@ -23,7 +23,6 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
 
     public void visitTypeDeclaration(TypeDeclaration<?> declaration, Void arg) {
         String declarationName = declaration.getFullyQualifiedName().orElseGet(declaration::getNameAsString);
-        System.out.println(" --- " + declarationName + " --- ");
 
 
         // clé : attribut
@@ -92,9 +91,9 @@ public class ClassCohesionCalculator extends VoidVisitorWithDefaults<Void> {
         }
 
         double TCC = computeTCC(graph);
+        double LCC = computeLCC(graph);
 
-        System.out.println("    TCC of " + TCC);
-        System.out.println("    LCC of " + computeLCC(graph));
+        System.out.println(declarationName + ";" + TCC + ";" + LCC);
 
         if (TCC > 0) {
             exportGraphViz(graph, connexions_label, declarationName);
