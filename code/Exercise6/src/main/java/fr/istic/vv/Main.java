@@ -1,17 +1,9 @@
 package fr.istic.vv;
 
-import com.github.javaparser.Problem;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.utils.SourceRoot;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Main {
 
@@ -26,6 +18,8 @@ public class Main {
             System.err.println("Provide a path to an existing readable directory");
             System.exit(2);
         }
+
+        System.out.println("name;TCC;LCC");
 
         SourceRoot root = new SourceRoot(file.toPath());
         ClassCohesionCalculator printer = new ClassCohesionCalculator();
