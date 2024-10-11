@@ -1,31 +1,42 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import sys
 
-def main(args: list[str]):
+def box_plot(args: list[str]):
 
     maindf = pd.DataFrame()
 
     for path in args[1:]:
         df = pd.read_csv(path,sep=';',header=None)
-        print(df.shape)
         column_to_add = df[[2]]
         column_to_add.columns = [path]
         maindf = pd.concat([maindf, column_to_add], axis=1)
 
-    print(maindf.describe())
+    df_melted = maindf.melt(var_name='Codebase', value_name='Complexity Cyclomatic')
 
-    df_melted = maindf.melt(var_name='Category', value_name='Value')
+    fig = px.box(df_melted, x='Codebase', y='Complexity Cyclomatic', title='Box Plots of the Cyclomatic Complexity in Different Codebase')
+    fig.show()
 
-    # # Sample data
-    # data = {
-    #     "Category": ["A", "A", "A", "B", "B", "B", "C", "C", "C"],
-    #     "Value": [10, 15, 14, 22, 24, 19, 30, 35, 31]
-    # }
-    # df = pd.DataFrame(data)
 
-    # # Create the boxplot
-    fig = px.box(df_melted, x='Category', y='Value', title='Box Plots of Different Datasets')
+
+
+def histogram(args: list[str]):
+
+    maindf = pd.DataFrame()
+
+    fig = go.Figure()
+    for path in args[1:]:
+        df = pd.read_csv(path,sep=';',header=None)
+        column_to_add = df[[2]]
+        column_to_add.columns = [path]
+        maindf = pd.concat([maindf, column_to_add], axis=1)
+        fig.add_trace(go.Histogram(
+            x=column_to_add[path].to_numpy(),
+            name=path, # name used in legend and hover labels
+            opacity=0.75
+        ))
+
     fig.show()
 
 
@@ -35,4 +46,5 @@ if __name__ == "__main__":
             print("Usage: python script.py <cc_table_path>...")
             sys.exit(1)
 
-    main(sys.argv)
+    histogram(sys.argv)
+    box_plot(sys.argv)
